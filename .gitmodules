@@ -1,0 +1,3 @@
+[submodule "math"]
+	path = math
+	url = https://github.com/kafa46/deeplearning_math.git
