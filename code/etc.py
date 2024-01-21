@@ -1,145 +1,92 @@
-## 데이터 복사 ##
-from tqdm import tqdm
-import shutil,os
+# /home/ms/Downloads/jeju/53/annotations/instances_default.json
+# 20221103_W_T0293_NI_01405.JPG 132
+# /home/ms/Downloads/jeju/53/annotations/instances_default.json
+# 20221103_W_T0296_NI_00699.JPG 133
+# import pandas as pd
+import os
+
+aa = ['20221103_W_T0293_NI_01405.JPG','20221103_W_T0296_NI_00699.JPG']
+import random
 from glob import glob
 import json
+from tqdm import tqdm
+import pymysql
+import cv2
 
-# path = "C:/Users/human/Desktop/Workplace/Plan/*품질*"
+# host_name = '192.168.0.13'
+# user_name = 'land'
+# paswd = 'land' \
+#         '2021!@'
+# db = 'landdb'
 #
-# file_list = glob.glob(path, recursive=True)
-# file_name = [os.path.basename(name) for name in file_list]
 #
-# test = 'C:/Users/human/Desktop/test/'
+# conn=pymysql.connect(host=host_name, user=user_name,password=paswd, db=db, port=3306)
 #
-# for file in glob.glob('C:/Users/human/Desktop/Workplace/Plan/*품질*'):
-#     print(file)
-#     shutil.copy(file, test)
+# sql = """
+# select IMG_NAME
+# from ai_image_tbl;
+# """
+# cursor = conn.cursor()
+# cursor.execute(sql)
+# rows = cursor.fetchall()
+# cursor.close()
+# file_lst = []
+# for i in rows:
+#     file_lst.append(i[0])
+#
+# dup_list = []
+# num = 0
+# for temp_file in tqdm(glob('D:/download/Landmarks/**/*.png', recursive=True)):
+#     file_name = temp_file.split('\\')[1]+'-'+temp_file.split('\\')[2] + '-'+temp_file.split('\\')[-1]
+#     if file_name not in file_lst:
+#         dup_list.append(file_name)
+#         num+=1
+# print(dup_list)
+# print(num)
 
+def random_color():
+    r = random.randint(0, 255)
+    g = random.randint(0, 255)
+    b = random.randint(0, 255)
+    return (r, g, b)
 
-main_path = 'H:/Data/03_Landmark/label'
-cls_dict = dict()
-mid_dict = dict()
+# 15가지 랜덤 색상 추출
+num_colors = 15
+color_maps = {idx: random_color() for idx, _ in enumerate(range(num_colors))}
+cls_dict = {0:'young_man',
+1:'young_woman',
+2:'middle_aged_man',
+3:'middle_aged_woman',
+4:'old_aged_man',
+5:'old_aged_woman',
+6:'face',
+7:'opened_eyes',
+8:'closed_eyes',
+9:'cigar',
+10:'phone',
+11:'mask',
+12:'bottle',
+13:'dog',
+14:'seat_belt'}
 
-for j_file in tqdm(glob(main_path+'/**/*.json', recursive=True)):
-    with open(os.path.join(main_path, j_file), encoding='utf-8-sig') as json_file:
-        j_data = json.load(json_file)
-        # print(j_data)
-        for ann in j_data['regions']:
-            if ann['class']=='castle gate':
-                print(j_file)
-                break
+for txt_file in tqdm(glob('/data/save_900/**/*.txt', recursive=True)):
+    img_file = txt_file.replace('labels','images').replace('.txt','.png')
+    save_file = img_file.replace('images','resutls')
+    os.makedirs('/'.join(save_file.split('/')[:-1]), exist_ok=True)
+    img = cv2.imread(img_file)
+    img_h, img_w = img.shape[:-1]
+    with open(txt_file) as t_file:
+        for ann in t_file:
+            cls, x,y,w,h = [float(coord) for coord in ann.split()]
 
-#         try:
-#             for ann in j_data['regions']:
-#                 if ann['class'] not in cls_dict.keys():
-#                     cls_dict[ann['class']] = 1
-#                 else :
-#                     cls_dict[ann['class']] += 1
-#
-#                 if ann['tags'][5] not in mid_dict.keys():
-#                     mid_dict[ann['tags'][5]] = 1
-#                 else:
-#                     mid_dict[ann['tags'][5]] +=1
-#         except Exception as e:
-#             print(j_file)
-#             pass
-# print(cls_dict)
-# print('-'*50)
-# print(mid_dict)
+            x_min = int((x - w / 2) * img_w)
+            y_min = int((y - h / 2) * img_h)
 
-# import struct
-# import numpy as np
-# with open("G:/Request_data/data/TS/kitti/training/velodyne/000000.bin","rb") as f:
-#     # data = f.read()
-#
-#     rectype = np.dtype(np.int32)
-#     bdata=np.fromfile(f, dtype=rectype)
-#
-# print(bdata)
-# for idx, i in enumerate(bdata):
-#     if i==3:
-#         print(i)
+            # 꼭짓점 좌표 계산
+            x_max = int(x_min + (w * img_w))
+            y_max = int(y_min + (h * img_h))
 
-# import tensorflow as tf
+            cv2.rectangle(img, (x_min, y_min), (x_max, y_max), color_maps[int(cls)],2)
+            cv2.putText(img, cls_dict[int(cls)], (x_min,y_min), cv2.FONT_HERSHEY_COMPLEX, 2, (0,0,200), 2)
 
-# import json
-#
-# import numpy as np
-#
-# PATH = 'G:/다운로드/segment-10072231702153043603_5725_000_5745_000_with_camera_labels.tfrecord'
-
-
-# import tensorflow.compat.v1 as tf
-# tf.disable_v2_behavior()
-# from PIL import Image
-# import io
-# import sys
-#
-# #tfrecord_filename = 'example_cat.tfrecord'
-#
-# def readRecord(filename_queue):
-#     reader = tf.TFRecordReader()
-#     _,serialized_example = reader.read(filename_queue)
-#
-#     #'''
-#     keys_to_features = {
-#         'image/height': tf.FixedLenFeature((), tf.int64, 1),
-#         'image/width': tf.FixedLenFeature((), tf.int64, 1),
-#         'image/colorspace': tf.FixedLenFeature((), tf.string, default_value=''),
-#         'image/channels': tf.FixedLenFeature((), tf.int64, 1),
-#         'image/class/label': tf.FixedLenFeature((), tf.int64, 1),
-#         'image/class/text': tf.FixedLenFeature((), tf.string, default_value=''),
-#         'image/format': tf.FixedLenFeature((), tf.string, default_value='JPEG'),
-#         'image/filename': tf.FixedLenFeature((), tf.string, default_value=''),
-#         'image/encoded': tf.FixedLenFeature((), tf.string, default_value=''),
-#     }
-#
-#     features = tf.parse_single_example(serialized_example,features= keys_to_features)
-#
-#     height = tf.cast(features['image/height'],tf.int64)
-#     width = tf.cast(features['image/width'],tf.int64)
-#     colorspace = tf.cast(features['image/colorspace'], tf.string)
-#     channels = tf.cast(features['image/channels'], tf.int64)
-#     label = tf.cast(features['image/class/label'], tf.int64)
-#     text = tf.cast(features['image/class/text'], tf.string)
-#     format = tf.cast(features['image/format'],tf.string)
-#     filename = tf.cast(features['image/filename'],tf.string)
-#     encoded = tf.cast(features['image/encoded'],tf.string)
-#
-#
-#     return height,width,colorspace,channels,label,text,format,filename,encoded
-#
-# def main():
-#     if len(sys.argv) != 2:
-#         print("Usage : python3 tfrecord_reader.py <tfrecord_file_name>")
-#     else:
-#         tfrecord_filename = sys.argv[1]
-#         filename_queue = tf.train.string_input_producer([tfrecord_filename])
-#         height,width,colorspace,channels,label,text,format,filename,encoded = readRecord(filename_queue)
-#
-#         init_op = tf.global_variables_initializer()
-#
-#         with tf.Session() as sess:
-#             sess.run(init_op)
-#
-#             coord = tf.train.Coordinator()
-#             threads = tf.train.start_queue_runners(coord=coord)
-#
-#             vheight,vwidth,vcolorspace,vchannels,vlabel,vtext,vformat,vfilename,vencoded = \
-#             sess.run([height,width,colorspace,channels,label,text,format,filename,encoded])
-#             print("vheight : %d" %vheight)
-#             print("vwidth : %d" %vwidth)
-#             print("vcolorspace : %s" %vcolorspace)
-#             print("vchannels : %d" %vchannels)
-#             print("vlabel : %d" %vlabel)
-#             print("vtext : %s" %vtext)
-#             print("vformat : %s" %vformat)
-#             print("vfilename : %s" %vfilename)
-#             image = Image.open(io.BytesIO(vencoded))
-#             image.show()
-#
-#             coord.request_stop()
-#             coord.join(threads)
-#
-# if __name__ == "__main__":
-#     main()
+    cv2.imwrite(save_file, img)
