@@ -1,0 +1,108 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "metaData": {
+      "type": "object",
+      "properties": {
+        "유급자품새": {"type": "string"}
+      },
+      "required": ["유급자품새"]
+    },
+    "InspRejectYn": {"type": "string"},
+    "labelingInfo": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "pose": {
+                "type": "object",
+                "properties": {
+                  "location": {
+                    "type": "object",
+                    "patternProperties": {
+                      "^.+$": {
+                        "type": "object",
+                        "properties": {
+                          "x": {"type": "string"},
+                          "y": {"type": "string"},
+                          "view": {"type": "integer"}
+                        },
+                        "required": ["x", "y", "view"]
+                      }
+                    }
+                  },
+                  "label": {"type": "string"},
+                  "type": {"type": "string", "enum": ["pose"]}
+                },
+                "required": ["location", "label", "type"]
+              }
+            },
+            "required": ["pose"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "box": {
+                "type": "object",
+                "properties": {
+                  "boundingBox": {
+                    "type": "object",
+                    "properties": {
+                      "Xmin": {"type": "integer"},
+                      "Xmax": {"type": "integer"},
+                      "Ymin": {"type": "integer"},
+                      "Ymax": {"type": "integer"}
+                    },
+                    "required": ["Xmin", "Xmax", "Ymin", "Ymax"]
+                  },
+                  "label": {"type": "string"},
+                  "type": {"type": "string", "enum": ["box"]}
+                },
+                "required": ["boundingBox", "label", "type"]
+              }
+            },
+            "required": ["box"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "images": {
+                "type": "object",
+                "properties": {
+                  "id": {"type": "string"},
+                  "width": {"type": "integer"},
+                  "height": {"type": "integer"},
+                  "license": {"type": "string"},
+                  "camera id": {"type": "string"},
+                  "date created": {"type": "string"}
+                },
+                "required": ["id", "width", "height", "license", "camera id", "date created"]
+              }
+            },
+            "required": ["images"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "info": {
+                "type": "object",
+                "properties": {
+                  "version": {"type": "string"},
+                  "description": {"type": "string"},
+                  "contributor": {"type": "string"},
+                  "url": {"type": "string"}
+                },
+                "required": ["version", "description", "contributor", "url"]
+              }
+            },
+            "required": ["info"]
+          }
+        ]
+      }
+    }
+  },
+  "required": ["metaData", "InspRejectYn", "labelingInfo"]
+}

@@ -1,0 +1,7 @@
+-- SELECT SUM(PO), COUNT(PO) FROM s2_po;
+-- SELECT SUM(BB), COUNT(BB) FROM s2_bb;
+-- SELECT count(BB), SUM(BB) FROM s3_bb; 
+-- SELECT count(PO), SUM(PO) FROM s3_po;
+-- SELECT SUM(BB), COUNT(BB) FROM s1;
+
+SELECT * FROM s3_po WHERE class06 <>0;

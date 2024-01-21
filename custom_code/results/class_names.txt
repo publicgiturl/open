@@ -1,0 +1,3 @@
+_background_
+ego vehicle
+out of roi

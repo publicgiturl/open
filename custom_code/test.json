@@ -1,0 +1,41 @@
+{
+  'file': [
+    'HF01_01FT_000385.json',
+    'HF01_01FT_002376.json',
+    'HF01_01FT_000002.json'
+  ],
+  'err': [
+    "'Iphone' is not one of ['samsung', 'Xiaomi', 'LGE']",
+    "'2021-09-28 12:4' does not match '^\\\\d{4}-\\\\d{2}-\\\\d{2} \\\\d{2}:\\\\d{2}$'",
+    "'Hf01_01FT_000002' does not match '^[A-Z]{2}\\\\d{2}_\\\\d{2}[A-Z]{2}_\\\\d{6}$'"
+  ],
+  'err_path': [
+    deque(
+    [
+      'properties',
+      'Info',
+      'properties',
+      'CMRA_INFO',
+      'enum'
+    ]
+    ),
+    deque(
+    [
+      'properties',
+      'Environment',
+      'properties',
+      'MSRG_DATETM',
+      'pattern'
+    ]
+    ),
+    deque(
+    [
+      'properties',
+      'Info',
+      'properties',
+      'IMAGE_FILE_NM',
+      'pattern'
+    ]
+    )
+  ]
+}

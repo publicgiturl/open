@@ -1,0 +1,48 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "Source_Image_Info": {
+            "type": "object",
+            "properties": {
+                "Img_name": {"type": "string"},
+                "Img_path": {"type": "string"},
+                "Resolution": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    },
+                    "minItems": 2,
+                    "maxItems": 2
+                },
+                "Copyrighter": {"type": "string"},
+                "Time_zone": {"type": "string"},
+                "Location": {"type": "string"},
+                "Gps": {"type": "string"},
+                "Weather": {"type": "string"}
+            },
+            "required": ["Img_name", "Img_path", "Resolution"]
+        },
+        "Annotation": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "Label": {"type": "string"},
+                    "Type": {"type": "string"},
+                    "Coordinate": {
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        },
+                        "minItems": 4,
+                        "maxItems": 4
+                    },
+                    "Data_type": {"type": "string"}
+                },
+                "required": ["Label", "Type", "Coordinate", "Data_type"]
+            }
+        }
+    },
+    "required": ["Source_Image_Info", "Annotation"]
+}
